@@ -16,8 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from restaurant.views import BookingViewSet, MenuItemView, SingleMenuItemView
+from rest_framework.authtoken.views import obtain_auth_token
+
+# Create a router and register our viewset
+router = DefaultRouter()
+#
+router.register(r'tables', BookingViewSet)
+#
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('restaurant/', include('restaurant.urls')),
+    path('restaurant/menu/', include('restaurant.urls')),
+    path('restaurant/booking/', include(router.urls)),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('api-token-auth/', obtain_auth_token),
+    path('api/menu-items/', MenuItemView.as_view(), name='menu-items'),
+    # URL for multiple menu items (GET, POST)
+    path('api/menu-items/', MenuItemView.as_view(), name='menu-items'),
+
+    # Add this URL for single menu item (GET, PUT, DELETE)
+    path('api/menu-items/<int:pk>/', SingleMenuItemView.as_view(), name='single-menu-item'),
+
 ]
